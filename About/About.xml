@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>Sanguophage: The Overhaul</name>
+	<author>Azuraal</author>
+	<supportedVersions>
+		<li>1.4</li>
+	</supportedVersions>
+	<packageId>azuraal.sanguophageoverhaul</packageId>
+<description>Adjustes Sanguophage genome, changes the way deathrest capacity is increasesed and makes hemogenpacks spoil and less nourishing.</description>
+</ModMetaData>

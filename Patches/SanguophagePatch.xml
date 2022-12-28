@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<Operation Class="PatchOperationRemove">
+		<xpath>Defs/XenotypeDef[defName="Sanguophage"]/genes/li[text()="PsychicAbility_Enhanced" or text()="MoveSpeed_Quick" or text()="Aggression_Aggressive"]</xpath>
+	</Operation>
+	
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/XenotypeDef[defName="Sanguophage"]/genes</xpath>
+		<value>
+			<li>StrongStomach</li>
+			<li>Aggression_HyperAggressive</li>
+			<li>MinTemp_LargeDecrease</li>
+			<li>MaxTemp_LargeIncrease</li>
+			<li>Pain_Reduced</li>
+			<li>Sterile</li>
+			<li>AptitudeStrong_Shooting</li>
+		</value>
+	</Operation>
+	
+	<Operation Class="PatchOperationReplace">
+		<xpath>Defs/ThingDef[defName="HemogenPack"]/ingestible/outcomeDoers/li[@Class="IngestionOutcomeDoer_OffsetHemogen"]</xpath>
+		<value>
+			<li Class="IngestionOutcomeDoer_OffsetHemogen">
+				<offset>0.1</offset>
+			</li>
+		</value>
+	</Operation>
+	
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/ThingDef[defName="HemogenPack"]/comps</xpath>
+		<value>
+			<li Class="CompProperties_Rottable">
+				<daysToRotStart>3</daysToRotStart>
+				<rotDestroys>true</rotDestroys>
+			</li>
+		</value>
+	</Operation>
+	
+	<Operation Class="PatchOperationRemove">
+		<xpath>Defs/ThingDef[defName="DeathrestCapacitySerum"]/thingSetMakerTags/li[text()="RewardStandardHighFreq"]</xpath>
+	</Operation>
+
+	<Operation Class="PatchOperationRemove">
+		<xpath>Defs/TraderKindDef/stockGenerators/li[thingDef="DeathrestCapacitySerum"]</xpath>
+	</Operation>
+</Patch>
