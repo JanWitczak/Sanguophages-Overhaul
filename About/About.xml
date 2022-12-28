@@ -6,5 +6,21 @@
 		<li>1.4</li>
 	</supportedVersions>
 	<packageId>azuraal.sanguophageoverhaul</packageId>
-<description>Adjustes Sanguophage genome, changes the way deathrest capacity is increasesed and makes hemogenpacks spoil and less nourishing.</description>
+		<modDependencies>
+		<li>
+			<packageId>Ludeon.RimWorld.Biotech</packageId>
+			<displayName>Biotech</displayName>
+		</li>
+		<li>
+			<packageId>brrainz.harmony</packageId>
+			<displayName>Harmony</displayName>
+			<steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+			<downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+		</li>
+	</modDependencies>
+	<loadAfter>
+        <li>brrainz.harmony</li>
+		<li>Ludeon.RimWorld.Biotech</li>
+    </loadAfter>
+	<description>Adjustes Sanguophage genome, changes the way deathrest capacity is increasesed and makes hemogenpacks spoil and less nourishing.</description>
 </ModMetaData>
