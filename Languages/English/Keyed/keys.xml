@@ -2,7 +2,7 @@
 	<LanguageData>
 		<Cannibalize>Cannibalize</Cannibalize>
 		<CannibalizeDesc>Cannibalize the target empowering your colonist's deathrest capacity.</CannibalizeDesc>
-		<NoCure>Pawns with a xenotype considered a vamire can't change to a xenotype not considered a vampire.</NoCure>
+		<NoCure>Pawns with a xenotype considered a vampire can't change to a xenotype not considered a vampire.</NoCure>
 		<DynamicUndeath>Not only Saunguophages, but any xenotype with Deathless and Deathrest genes is considered a vampire.</DynamicUndeath>
 		<OnlyBloodfeedersCanCannibalize>Cannibalizing vampires can only be done by xenotypes with bloodfeeder gene.</OnlyBloodfeedersCanCannibalize>
 	</LanguageData>
