@@ -22,10 +22,10 @@ namespace SanguophageOverhaul
 	{
 		static void Postfix(ref bool __result, Thing thing)
 		{
-			if(__result && SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenogenesAreUndead(((Pawn)thing).genes))
+			if(__result && SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire(((Pawn)thing).genes))
 			{
 				List<Thing> xenogerms = ((Pawn)thing).Map.listerThings.ThingsOfDef(ThingDefOf.Xenogerm);
-				if(!xenogerms.Exists(x => SanguophageOverhaul.XenogermIsUndead(((Xenogerm)x).GeneSet)))
+				if(!xenogerms.Exists(x => SanguophageOverhaul.XenogermIsVampire(((Xenogerm)x).GeneSet)))
 				{
 					__result = false;
 				}
@@ -37,9 +37,9 @@ namespace SanguophageOverhaul
 	{
 		static void Postfix(Pawn pawn, ref List<Xenogerm> ___xenogerms)
 		{
-			if (SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenogenesAreUndead(pawn.genes))
+			if (SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire(pawn.genes))
 			{
-				___xenogerms.RemoveAll(x => !SanguophageOverhaul.XenogermIsUndead(x.GeneSet));
+				___xenogerms.RemoveAll(x => !SanguophageOverhaul.XenogermIsVampire(x.GeneSet));
 			}
 		}
 	}
@@ -52,7 +52,7 @@ namespace SanguophageOverhaul
 			{
 				yield return gizmo;
 			}
-			if(SanguophageOverhaul.XenogenesAreVampire(___pawn.genes) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
+			if(SanguophageOverhaul.XenotypeCanCannibalize(___pawn.genes) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
 			{
 				yield return new CannibalizeCommand(___pawn);
 			}

@@ -31,7 +31,7 @@ namespace SanguophageOverhaul
 			return "Sanguophage: The Overhaul";
 		}
 
-		public static bool XenogermIsUndead(GeneSet genes)
+		public static bool XenogermIsVampire(GeneSet genes)
 		{
 			if (Settings.DynamicUndeath)
 			{
@@ -43,7 +43,7 @@ namespace SanguophageOverhaul
 				return false;
 			}
 		}
-		public static bool XenogenesAreUndead(Pawn_GeneTracker genes)
+		public static bool XenotypeIsVampire(Pawn_GeneTracker genes)
 		{
 			if(Settings.DynamicUndeath)
 			{
@@ -56,18 +56,14 @@ namespace SanguophageOverhaul
 				else return false;
 			}
 		}
-		public static bool XenogenesAreVampire(Pawn_GeneTracker genes)
+		public static bool XenotypeCanCannibalize(Pawn_GeneTracker genes)
 		{
-			if(Settings.DynamicUndeath && Settings.OnlyBloodfeedersCanCannibalize)
+			if (Settings.OnlyBloodfeedersCanCannibalize)
 			{
-				if(XenogenesAreUndead(genes) && genes.HasXenogene(SanguophageOverhaulDefsOf.Bloodfeeder)) return true;
+				if(XenotypeIsVampire(genes) && genes.HasXenogene(SanguophageOverhaulDefsOf.Bloodfeeder)) return true;
 				else return false;
 			}
-			else
-			{
-				if(XenogenesAreUndead(genes)) return true;
-				else return false;
-			}
+			else return XenotypeIsVampire(genes);
 		}
 		public static void GiveCannibalizeJob(Pawn cannibal, Pawn target)
 		{
@@ -90,12 +86,12 @@ namespace SanguophageOverhaul
 	public class SanguophageOverhaulSettings : ModSettings
 	{
 		public bool NoCure = true;
-		public bool DynamicUndeath = true;
+		public bool DynamicUndeath = false;
 		public bool OnlyBloodfeedersCanCannibalize = true;
 		public override void ExposeData()
 		{
 			Scribe_Values.Look(ref NoCure, "NoCure", defaultValue:true);
-			Scribe_Values.Look(ref DynamicUndeath, "DynamicUndeath", defaultValue:true);
+			Scribe_Values.Look(ref DynamicUndeath, "DynamicUndeath", defaultValue:false);
 			Scribe_Values.Look(ref OnlyBloodfeedersCanCannibalize, "OnlyBloodfeedersCanCannibalize", defaultValue:true);
 		}
 	}
@@ -132,7 +128,7 @@ namespace SanguophageOverhaul
 			{
 				if(pawn.genes != null && pawn != victim)
 				{
-					if(SanguophageOverhaul.XenogenesAreVampire(pawn.genes))
+					if(SanguophageOverhaul.XenotypeIsVampire(pawn.genes))
 					{			
 						options.Add(new FloatMenuOption(pawn.LabelShort, delegate
 						{
