@@ -128,7 +128,7 @@ namespace SanguophageOverhaul
 			{
 				if(pawn.genes != null && pawn != victim)
 				{
-					if(SanguophageOverhaul.XenotypeIsVampire(pawn.genes))
+					if(SanguophageOverhaul.XenotypeCanCannibalize(pawn.genes))
 					{			
 						options.Add(new FloatMenuOption(pawn.LabelShort, delegate
 						{

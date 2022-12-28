@@ -52,7 +52,7 @@ namespace SanguophageOverhaul
 			{
 				yield return gizmo;
 			}
-			if(SanguophageOverhaul.XenotypeCanCannibalize(___pawn.genes) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
+			if(SanguophageOverhaul.XenotypeIsVampire(___pawn.genes) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
 			{
 				yield return new CannibalizeCommand(___pawn);
 			}
