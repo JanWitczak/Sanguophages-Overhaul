@@ -58,4 +58,15 @@ namespace SanguophageOverhaul
 			}
 		}
 	}
+	[HarmonyPatch(typeof(Gene_Deathrest), "Reset")]
+	static class DeathrestConstructorPatch
+	{
+		static void Postfix(ref int ___deathrestCapacity, Gene_Deathrest __instance)
+		{
+			if(__instance.pawn.genes.Xenotype == XenotypeDefOf.Sanguophage)
+			{
+				___deathrestCapacity = 2;
+			}
+		}
+	}
 }
