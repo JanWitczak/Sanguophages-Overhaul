@@ -73,6 +73,7 @@ namespace SanguophageOverhaul
 		{
 			int offset = ((Gene_Deathrest)target.genes.GetGene(SanguophageOverhaulDefsOf.Deathrest)).DeathrestCapacity;
 			((Gene_Deathrest)cannibal.genes.GetGene(SanguophageOverhaulDefsOf.Deathrest)).OffsetCapacity(offset, sendNotification:true);
+			target.genes.SetXenotype(XenotypeDefOf.Baseliner);
 			DamageInfo damageInfo = new DamageInfo(DamageDefOf.ExecutionCut, 999f, 999f, -1f, null, target.health.hediffSet.GetBrain());
 			damageInfo.SetIgnoreInstantKillProtection(ignore: true);
 			damageInfo.SetAllowDamagePropagation(val: false);
@@ -145,7 +146,7 @@ namespace SanguophageOverhaul
 	}
 	public class JobDriver_Cannibalize : JobDriver
 	{
-		static readonly int CannibalizeDuration = 60;
+		static readonly int CannibalizeDuration = 200;
 		public Pawn Target => job.targetA.Thing as Pawn;
 		public override bool TryMakePreToilReservations(bool errorOnFailed)
 		{

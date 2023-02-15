@@ -17,6 +17,22 @@ namespace SanguophageOverhaul
 			harmony.PatchAll(assembly);
 		}
 	}
+	[HarmonyPatch(typeof(CompAbilityEffect_ReimplantXenogerm), "Valid")]
+	static class ReimplantXenogermPatch
+	{
+		static void Postfix(ref bool __result, LocalTargetInfo target, bool throwMessages)
+		{
+			if(__result && SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire((target.Pawn).genes))
+			{
+				List<Thing> xenogerms = (target.Pawn).Map.listerThings.ThingsOfDef(ThingDefOf.Xenogerm);
+				if(!xenogerms.Exists(x => SanguophageOverhaul.XenogermIsVampire(((Xenogerm)x).GeneSet)))
+				{
+					__result = false;
+					if (throwMessages) Messages.Message("MessageCannotOverrideVampireXenotype".Translate(target.Pawn), target.Pawn, MessageTypeDefOf.RejectInput, historical: false);
+				}
+			}
+		}
+	}
 	[HarmonyPatch(typeof(Recipe_ImplantXenogerm), "AvailableOnNow")]
 	static class ImplantXenogermPatch
 	{
@@ -52,20 +68,9 @@ namespace SanguophageOverhaul
 			{
 				yield return gizmo;
 			}
-			if(SanguophageOverhaul.XenotypeIsVampire(___pawn.genes) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
+			if(SanguophageOverhaul.XenotypeIsVampire(___pawn.genes) && !___pawn.health.hediffSet.HasHediff(HediffDefOf.XenogerminationComa) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
 			{
 				yield return new CannibalizeCommand(___pawn);
-			}
-		}
-	}
-	[HarmonyPatch(typeof(Gene_Deathrest), "Reset")]
-	static class DeathrestConstructorPatch
-	{
-		static void Postfix(ref int ___deathrestCapacity, Gene_Deathrest __instance)
-		{
-			if(__instance.pawn.genes.Xenotype == XenotypeDefOf.Sanguophage)
-			{
-				___deathrestCapacity = 2;
 			}
 		}
 	}
