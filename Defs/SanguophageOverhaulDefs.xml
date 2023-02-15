@@ -6,4 +6,38 @@
 		<reportString>Cannibalizing TargetA.</reportString>
 		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
 	</JobDef>
+	
+	<RecipeDef>
+		<defName>MakeDeathrestCapacitySerum</defName>
+		<label>make deathrest capacity serum</label>
+		<description>Make a deathrest capacity serum.</description>
+		<jobString>Making deathrest capacity serum.</jobString>
+		<workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+		<effectWorking>Cook</effectWorking>
+		<soundWorking>Recipe_Machining</soundWorking>
+		<workAmount>2500</workAmount>
+		<ingredients>
+			<li>
+			<filter>
+				<thingDefs>
+					<li>ArchiteCapsule</li>
+				</thingDefs>
+			</filter>
+				<count>1</count>
+			</li>
+		</ingredients>
+		<fixedIngredientFilter>
+			<thingDefs>
+				<li>ArchiteCapsule</li>
+			</thingDefs>
+		</fixedIngredientFilter>
+		<products>
+			<DeathrestCapacitySerum>1</DeathrestCapacitySerum>
+		</products>
+		<researchPrerequisite>Deathrest</researchPrerequisite>
+		<skillRequirements>
+			<Crafting>8</Crafting>
+		</skillRequirements>
+		<workSkill>Crafting</workSkill>
+	</RecipeDef>
 </Defs>
