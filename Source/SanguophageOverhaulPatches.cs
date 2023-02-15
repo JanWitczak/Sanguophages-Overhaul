@@ -22,13 +22,12 @@ namespace SanguophageOverhaul
 	{
 		static void Postfix(ref bool __result, LocalTargetInfo target, bool throwMessages)
 		{
-			if(__result && SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire((target.Pawn).genes))
+			if (target.Pawn != null)
 			{
-				List<Thing> xenogerms = (target.Pawn).Map.listerThings.ThingsOfDef(ThingDefOf.Xenogerm);
-				if(!xenogerms.Exists(x => SanguophageOverhaul.XenogermIsVampire(((Xenogerm)x).GeneSet)))
+				if(__result && SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire((target.Pawn).genes))
 				{
 					__result = false;
-					if (throwMessages) Messages.Message("MessageCannotOverrideVampireXenotype".Translate(target.Pawn), target.Pawn, MessageTypeDefOf.RejectInput, historical: false);
+					if (throwMessages) Messages.Message("MessageCannotOverrideVampireXenotype".Translate(), target.Pawn, MessageTypeDefOf.RejectInput, historical: false);
 				}
 			}
 		}
