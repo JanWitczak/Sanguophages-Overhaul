@@ -37,10 +37,9 @@ namespace SanguophageOverhaul
 				{
 					pawn.genes.AddGene(SanguophageDefsOf.Sterile, true);
 				}
-				GeneUtility.SortGenes(pawn.genes.Xenogenes);
 				if(Sanguophage.Settings.ValidateGenes)
 				{
-					if(pawn.genes.Xenogenes.ConvertAll(x => x.def.defName) != (SanguophageDefsOf.Sanguophage.AllGenes.ConvertAll(x => x.defName)))
+					if(!(new HashSet<string>(pawn.genes.Xenogenes.ConvertAll(x => x.def.defName)).SetEquals(new HashSet<string>(SanguophageDefsOf.Sanguophage.AllGenes.ConvertAll(x => x.defName)))))
 					{
 						int deathrestCapacity = 1;
 						if(pawn.genes.Xenogenes.Find(x => x.def == SanguophageDefsOf.Deathrest) != null)

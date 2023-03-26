@@ -133,7 +133,6 @@ namespace SanguophageOverhaul
 			{
 				SanguophageDefsOf.Sanguophage.AllGenes.Add(SanguophageDefsOf.Sterile);
 			}
-			GeneUtility.SortGeneDefs(SanguophageDefsOf.Sanguophage.AllGenes);
 		}
 	}
 }
