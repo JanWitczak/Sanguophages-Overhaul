@@ -24,7 +24,7 @@ namespace SanguophageOverhaul
 		{
 			if (target.Pawn != null)
 			{
-				if(__result && SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire((target.Pawn).genes))
+				if(__result && Sanguophage.Settings.NoCure && Sanguophage.XenotypeIsVampire((target.Pawn).genes))
 				{
 					__result = false;
 					if (throwMessages) Messages.Message("MessageCannotOverrideVampireXenotype".Translate(), target.Pawn, MessageTypeDefOf.RejectInput, historical: false);
@@ -37,10 +37,10 @@ namespace SanguophageOverhaul
 	{
 		static void Postfix(ref bool __result, Thing thing)
 		{
-			if(__result && SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire(((Pawn)thing).genes))
+			if(__result && Sanguophage.Settings.NoCure && Sanguophage.XenotypeIsVampire(((Pawn)thing).genes))
 			{
 				List<Thing> xenogerms = ((Pawn)thing).Map.listerThings.ThingsOfDef(ThingDefOf.Xenogerm);
-				if(!xenogerms.Exists(x => SanguophageOverhaul.XenogermIsVampire(((Xenogerm)x).GeneSet)))
+				if(!xenogerms.Exists(x => Sanguophage.XenogermIsVampire(((Xenogerm)x).GeneSet)))
 				{
 					__result = false;
 				}
@@ -52,9 +52,9 @@ namespace SanguophageOverhaul
 	{
 		static void Postfix(Pawn pawn, ref List<Xenogerm> ___xenogerms)
 		{
-			if (SanguophageOverhaul.Settings.NoCure && SanguophageOverhaul.XenotypeIsVampire(pawn.genes))
+			if (Sanguophage.Settings.NoCure && Sanguophage.XenotypeIsVampire(pawn.genes))
 			{
-				___xenogerms.RemoveAll(x => !SanguophageOverhaul.XenogermIsVampire(x.GeneSet));
+				___xenogerms.RemoveAll(x => !Sanguophage.XenogermIsVampire(x.GeneSet));
 			}
 		}
 	}
@@ -67,7 +67,7 @@ namespace SanguophageOverhaul
 			{
 				yield return gizmo;
 			}
-			if(SanguophageOverhaul.XenotypeIsVampire(___pawn.genes) && !___pawn.health.hediffSet.HasHediff(HediffDefOf.XenogerminationComa) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
+			if(Sanguophage.XenotypeIsVampire(___pawn.genes) && !___pawn.health.hediffSet.HasHediff(HediffDefOf.XenogerminationComa) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
 			{
 				yield return new CannibalizeCommand(___pawn);
 			}

@@ -1,23 +1,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Verse;
-using Verse.AI;
 using RimWorld;
 
 namespace SanguophageOverhaul
 {
-	public class SanguophageOverhaul : Mod
+	public class Sanguophage : Mod
 	{
-		public static SanguophageOverhaulSettings Settings;
-		public SanguophageOverhaul(ModContentPack content) : base(content)
+		public static SanguophageSettings Settings;
+		private bool toggleCheck;
+		public Sanguophage(ModContentPack content) : base(content)
 		{
-			Settings = GetSettings<SanguophageOverhaulSettings>();
+			Settings = GetSettings<SanguophageSettings>();
+			toggleCheck = Settings.FertileSanguophages;
 		}
 		public override void DoSettingsWindowContents(Rect inRect)
 		{
 			Listing_Standard settingsMenu = new Listing_Standard();
 			settingsMenu.Begin(inRect);
 			settingsMenu.CheckboxLabeled("NoCure".Translate(), ref Settings.NoCure);
+			if(Current.Game == null)
+			{
+				settingsMenu.CheckboxLabeled("FertileSanguophages".Translate(), ref Settings.FertileSanguophages);			
+			}
+			else
+			{
+				settingsMenu.Label("FertileSanguophagesNotInGame".Translate());
+			}
 			settingsMenu.GapLine();
 			settingsMenu.CheckboxLabeled("DynamicUndeath".Translate(), ref Settings.DynamicUndeath);
 			if(Settings.DynamicUndeath)
@@ -25,17 +34,33 @@ namespace SanguophageOverhaul
 				settingsMenu.CheckboxLabeled("OnlyBloodfeedersCanCannibalize".Translate(), ref Settings.OnlyBloodfeedersCanCannibalize);
 			}
 			settingsMenu.End();
+			if(toggleCheck != Settings.FertileSanguophages)
+			{
+				PatchSterility();
+				toggleCheck = Settings.FertileSanguophages;
+			}
 		}
 		public override string SettingsCategory()
 		{
 			return "Sanguophage: The Overhaul";
 		}
-
+		public static void PatchSterility()
+		{
+			if(Sanguophage.Settings.FertileSanguophages && SanguophageDefsOf.Sanguophage.AllGenes.Contains(SanguophageDefsOf.Sterile))
+			{
+				SanguophageDefsOf.Sanguophage.AllGenes.Remove(SanguophageDefsOf.Sterile);
+			}
+			else if(!Sanguophage.Settings.FertileSanguophages && !SanguophageDefsOf.Sanguophage.AllGenes.Contains(SanguophageDefsOf.Sterile))
+			{
+				SanguophageDefsOf.Sanguophage.AllGenes.Add(SanguophageDefsOf.Sterile);
+			}
+			GeneUtility.SortGeneDefs(SanguophageDefsOf.Sanguophage.AllGenes);
+		}
 		public static bool XenogermIsVampire(GeneSet genes)
 		{
 			if (Settings.DynamicUndeath)
 			{
-				if(genes.GenesListForReading.Contains(SanguophageOverhaulDefsOf.Deathless) && genes.GenesListForReading.Contains(SanguophageOverhaulDefsOf.Deathrest)) return true;
+				if(genes.GenesListForReading.Contains(SanguophageDefsOf.Deathless) && genes.GenesListForReading.Contains(SanguophageDefsOf.Deathrest)) return true;
 				else return false;
 			}
 			else
@@ -47,7 +72,7 @@ namespace SanguophageOverhaul
 		{
 			if(Settings.DynamicUndeath)
 			{
-				if(genes.HasXenogene(SanguophageOverhaulDefsOf.Deathless) && genes.HasXenogene(SanguophageOverhaulDefsOf.Deathrest)) return true;
+				if(genes.HasXenogene(SanguophageDefsOf.Deathless) && genes.HasXenogene(SanguophageDefsOf.Deathrest)) return true;
 				else return false;
 			}
 			else
@@ -60,113 +85,49 @@ namespace SanguophageOverhaul
 		{
 			if (Settings.OnlyBloodfeedersCanCannibalize)
 			{
-				if(XenotypeIsVampire(genes) && genes.HasXenogene(SanguophageOverhaulDefsOf.Bloodfeeder)) return true;
+				if(XenotypeIsVampire(genes) && genes.HasXenogene(SanguophageDefsOf.Bloodfeeder)) return true;
 				else return false;
 			}
 			else return XenotypeIsVampire(genes);
 		}
-		public static void GiveCannibalizeJob(Pawn cannibal, Pawn target)
-		{
-			cannibal.jobs.TryTakeOrderedJob(JobMaker.MakeJob(SanguophageOverhaulDefsOf.Cannibalize, target), JobTag.Misc);
-		}
-		public static void Cannibalize(Pawn cannibal, Pawn target)
-		{
-			int offset = ((Gene_Deathrest)target.genes.GetGene(SanguophageOverhaulDefsOf.Deathrest)).DeathrestCapacity;
-			((Gene_Deathrest)cannibal.genes.GetGene(SanguophageOverhaulDefsOf.Deathrest)).OffsetCapacity(offset, sendNotification:true);
-			target.genes.SetXenotype(XenotypeDefOf.Baseliner);
-			DamageInfo damageInfo = new DamageInfo(DamageDefOf.ExecutionCut, 999f, 999f, -1f, null, target.health.hediffSet.GetBrain());
-			damageInfo.SetIgnoreInstantKillProtection(ignore: true);
-			damageInfo.SetAllowDamagePropagation(val: false);
-			target.forceNoDeathNotification = true;
-			target.TakeDamage(damageInfo);
-			target.forceNoDeathNotification = false;
-			ThoughtUtility.GiveThoughtsForPawnExecuted(target, cannibal, PawnExecutionKind.GenericBrutal);
-		}
 	}
 
-	public class SanguophageOverhaulSettings : ModSettings
+	public class SanguophageSettings : ModSettings
 	{
 		public bool NoCure = true;
+		public bool FertileSanguophages = false;
 		public bool DynamicUndeath = false;
 		public bool OnlyBloodfeedersCanCannibalize = true;
 		public override void ExposeData()
 		{
 			Scribe_Values.Look(ref NoCure, "NoCure", defaultValue:true);
+			Scribe_Values.Look(ref FertileSanguophages, "FertileSanguophages", defaultValue:false);
 			Scribe_Values.Look(ref DynamicUndeath, "DynamicUndeath", defaultValue:false);
 			Scribe_Values.Look(ref OnlyBloodfeedersCanCannibalize, "OnlyBloodfeedersCanCannibalize", defaultValue:true);
 		}
 	}
 
 	[DefOf]
-	public static class SanguophageOverhaulDefsOf
+	public static class SanguophageDefsOf
 	{
+		public static XenotypeDef Sanguophage;
 		public static GeneDef Deathless;
 		public static GeneDef Deathrest;
 		public static GeneDef Bloodfeeder;
+		public static GeneDef Sterile;
 		public static JobDef Cannibalize;
-		static SanguophageOverhaulDefsOf()
+		static SanguophageDefsOf()
 		{
-			DefOfHelper.EnsureInitializedInCtor(typeof(SanguophageOverhaulDefsOf));
+			DefOfHelper.EnsureInitializedInCtor(typeof(SanguophageDefsOf));
 		}
 	}
-	public class CannibalizeCommand : Command_Action
-	{
-		static CachedTexture BloodFeederTexture = new CachedTexture("UI/Icons/Genes/Gene_Bloodfeeder");
-		Pawn victim;
-		public CannibalizeCommand(Pawn pawn)
-		{
-			defaultLabel = "Cannibalize".Translate();
-			defaultDesc = "CannibalizeDesc".Translate();
-			icon = BloodFeederTexture.Texture;
-			victim = pawn;
-			action = Action;
-		}
-		void Action()
-		{
-			List<FloatMenuOption> options = new List<FloatMenuOption>();
-			List<Pawn> PlayerPawns = victim.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer);
-			foreach(Pawn pawn in PlayerPawns)
-			{
-				if(pawn.genes != null && pawn != victim)
-				{
-					if(SanguophageOverhaul.XenotypeCanCannibalize(pawn.genes))
-					{			
-						options.Add(new FloatMenuOption(pawn.LabelShort, delegate
-						{
-							SanguophageOverhaul.GiveCannibalizeJob(pawn , victim);
-						}, pawn, Color.white));
-					}
-				}
-			}
-			if(options.Any())
-			{
-				Find.WindowStack.Add(new FloatMenu(options));
-			}
-		}
-	}
-	public class JobDriver_Cannibalize : JobDriver
-	{
-		static readonly int CannibalizeDuration = 200;
-		public Pawn Target => job.targetA.Thing as Pawn;
-		public override bool TryMakePreToilReservations(bool errorOnFailed)
-		{
-			return pawn.Reserve(Target, job, 1, -1, null, errorOnFailed);
-		}
 
-		protected override IEnumerable<Toil> MakeNewToils()
+	[StaticConstructorOnStartup]
+	public static class SanguophageFertilityPatcher
+	{
+		static SanguophageFertilityPatcher()
 		{
-			this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
-			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch);
-			yield return Toils_General.WaitWith(TargetIndex.A, CannibalizeDuration, useProgressBar:true);
-			yield return Toils_General.Do(delegate
-			{
-				if(Target.HomeFaction != null && pawn.HomeFaction == Faction.OfPlayer)
-				{
-					Faction.OfPlayer.TryAffectGoodwillWith(Target.Faction, -100, canSendMessage: true, !Target.HomeFaction.temporary, HistoryEventDefOf.MemberKilled);
-				}
-				QuestUtility.SendQuestTargetSignals(Target.questTags, "Killed", Target.Named("SUBJECT"));
-				SanguophageOverhaul.Cannibalize(pawn, Target);
-			});
+			Sanguophage.PatchSterility();
 		}
 	}
 }
