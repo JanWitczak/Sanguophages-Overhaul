@@ -3,9 +3,11 @@
 		<Cannibalize>Cannibalize</Cannibalize>
 		<CannibalizeDesc>Cannibalize the target empowering your colonist's deathrest capacity.</CannibalizeDesc>
 		<NoCure>Pawns with a xenotype considered a vampire can't change to a xenotype not considered a vampire.</NoCure>
-		<FertileSanguophages>Sterile gene will be removed from Sanguophages.</FertileSanguophages>
-		<FertileSanguophagesNotInGame>Sanguophage sterility can only be toggled in the main menu.</FertileSanguophagesNotInGame>
 		<DynamicUndeath>Not only Saunguophages, but any xenotype with Deathless and Deathrest genes is considered a vampire.</DynamicUndeath>
 		<OnlyBloodfeedersCanCannibalize>Cannibalizing vampires can only be done by xenotypes with bloodfeeder gene.</OnlyBloodfeedersCanCannibalize>
 		<MessageCannotOverrideVampireXenotype>Vampiric xenotype can not be overriden.</MessageCannotOverrideVampireXenotype>
+		<FertileSanguophages>Sterile gene will be removed from Sanguophages.</FertileSanguophages>
+		<FertileSanguophagesNotInGame>Sanguophage sterility can only be toggled in the main menu.</FertileSanguophagesNotInGame>
+		<ValidateGenes>On save load reset the xenotype of Sanguophages with obselete or altered set of xenogenes.\nThis is independant of adding and removing sterility gene.</ValidateGenes>
+		<ValidateGenesNotInGame>Geneset validation can only be toggled in the main menu.</ValidateGenesNotInGame>
 	</LanguageData>

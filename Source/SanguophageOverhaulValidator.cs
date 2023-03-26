@@ -38,16 +38,19 @@ namespace SanguophageOverhaul
 					pawn.genes.AddGene(SanguophageDefsOf.Sterile, true);
 				}
 				GeneUtility.SortGenes(pawn.genes.Xenogenes);
-				if(pawn.genes.Xenogenes.ConvertAll(x => x.def.defName) != (SanguophageDefsOf.Sanguophage.AllGenes.ConvertAll(x => x.defName)))
+				if(Sanguophage.Settings.ValidateGenes)
 				{
-					int deathrestCapacity = 1;
-					if(pawn.genes.Xenogenes.Find(x => x.def == SanguophageDefsOf.Deathrest) != null)
+					if(pawn.genes.Xenogenes.ConvertAll(x => x.def.defName) != (SanguophageDefsOf.Sanguophage.AllGenes.ConvertAll(x => x.defName)))
 					{
-						deathrestCapacity = ((Gene_Deathrest)pawn.genes.Xenogenes.Find(x => x.def == SanguophageDefsOf.Deathrest)).DeathrestCapacity;
+						int deathrestCapacity = 1;
+						if(pawn.genes.Xenogenes.Find(x => x.def == SanguophageDefsOf.Deathrest) != null)
+						{
+							deathrestCapacity = ((Gene_Deathrest)pawn.genes.Xenogenes.Find(x => x.def == SanguophageDefsOf.Deathrest)).DeathrestCapacity;
+						}
+						Log.Warning("Resetting xenotype of " + pawn.Name.ToString());
+						pawn.genes.SetXenotype(SanguophageDefsOf.Sanguophage);
+						if(deathrestCapacity > 1) ((Gene_Deathrest)pawn.genes.Xenogenes.Find(x => x.def == SanguophageDefsOf.Deathrest)).OffsetCapacity(deathrestCapacity - 1, false);
 					}
-					Log.Warning("Resetting xenotype of " + pawn.Name.ToString());
-					pawn.genes.SetXenotype(SanguophageDefsOf.Sanguophage);
-					if(deathrestCapacity > 1) ((Gene_Deathrest)pawn.genes.Xenogenes.Find(x => x.def == SanguophageDefsOf.Deathrest)).OffsetCapacity(deathrestCapacity - 1, false);
 				}
 			}
 		}

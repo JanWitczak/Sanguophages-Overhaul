@@ -19,42 +19,32 @@ namespace SanguophageOverhaul
 			Listing_Standard settingsMenu = new Listing_Standard();
 			settingsMenu.Begin(inRect);
 			settingsMenu.CheckboxLabeled("NoCure".Translate(), ref Settings.NoCure);
-			if(Current.Game == null)
-			{
-				settingsMenu.CheckboxLabeled("FertileSanguophages".Translate(), ref Settings.FertileSanguophages);			
-			}
-			else
-			{
-				settingsMenu.Label("FertileSanguophagesNotInGame".Translate());
-			}
-			settingsMenu.GapLine();
 			settingsMenu.CheckboxLabeled("DynamicUndeath".Translate(), ref Settings.DynamicUndeath);
 			if(Settings.DynamicUndeath)
 			{
 				settingsMenu.CheckboxLabeled("OnlyBloodfeedersCanCannibalize".Translate(), ref Settings.OnlyBloodfeedersCanCannibalize);
 			}
+			settingsMenu.GapLine();
+			if(Current.Game == null)
+			{
+				settingsMenu.CheckboxLabeled("FertileSanguophages".Translate(), ref Settings.FertileSanguophages);
+				settingsMenu.CheckboxLabeled("ValidateGenes".Translate(), ref Settings.ValidateGenes);		
+			}
+			else
+			{
+				settingsMenu.Label("FertileSanguophagesNotInGame".Translate());
+				settingsMenu.Label("ValidateGenesNotInGame".Translate());
+			}
 			settingsMenu.End();
 			if(toggleCheck != Settings.FertileSanguophages)
 			{
-				PatchSterility();
+				SanguophageSterilityPatcher.PatchSterility();
 				toggleCheck = Settings.FertileSanguophages;
 			}
 		}
 		public override string SettingsCategory()
 		{
 			return "Sanguophage: The Overhaul";
-		}
-		public static void PatchSterility()
-		{
-			if(Sanguophage.Settings.FertileSanguophages && SanguophageDefsOf.Sanguophage.AllGenes.Contains(SanguophageDefsOf.Sterile))
-			{
-				SanguophageDefsOf.Sanguophage.AllGenes.Remove(SanguophageDefsOf.Sterile);
-			}
-			else if(!Sanguophage.Settings.FertileSanguophages && !SanguophageDefsOf.Sanguophage.AllGenes.Contains(SanguophageDefsOf.Sterile))
-			{
-				SanguophageDefsOf.Sanguophage.AllGenes.Add(SanguophageDefsOf.Sterile);
-			}
-			GeneUtility.SortGeneDefs(SanguophageDefsOf.Sanguophage.AllGenes);
 		}
 		public static bool XenogermIsVampire(GeneSet genes)
 		{
@@ -95,12 +85,15 @@ namespace SanguophageOverhaul
 	public class SanguophageSettings : ModSettings
 	{
 		public bool NoCure = true;
+		public bool ValidateGenes = true;
 		public bool FertileSanguophages = false;
+
 		public bool DynamicUndeath = false;
 		public bool OnlyBloodfeedersCanCannibalize = true;
 		public override void ExposeData()
 		{
 			Scribe_Values.Look(ref NoCure, "NoCure", defaultValue:true);
+			Scribe_Values.Look(ref ValidateGenes, "ValidateGenes", defaultValue:true);
 			Scribe_Values.Look(ref FertileSanguophages, "FertileSanguophages", defaultValue:false);
 			Scribe_Values.Look(ref DynamicUndeath, "DynamicUndeath", defaultValue:false);
 			Scribe_Values.Look(ref OnlyBloodfeedersCanCannibalize, "OnlyBloodfeedersCanCannibalize", defaultValue:true);
@@ -123,11 +116,24 @@ namespace SanguophageOverhaul
 	}
 
 	[StaticConstructorOnStartup]
-	public static class SanguophageFertilityPatcher
+	public static class SanguophageSterilityPatcher
 	{
-		static SanguophageFertilityPatcher()
+		static SanguophageSterilityPatcher()
 		{
-			Sanguophage.PatchSterility();
+			PatchSterility();
+		}
+
+		public static void PatchSterility()
+		{
+			if(Sanguophage.Settings.FertileSanguophages && SanguophageDefsOf.Sanguophage.AllGenes.Contains(SanguophageDefsOf.Sterile))
+			{
+				SanguophageDefsOf.Sanguophage.AllGenes.Remove(SanguophageDefsOf.Sterile);
+			}
+			else if(!Sanguophage.Settings.FertileSanguophages && !SanguophageDefsOf.Sanguophage.AllGenes.Contains(SanguophageDefsOf.Sterile))
+			{
+				SanguophageDefsOf.Sanguophage.AllGenes.Add(SanguophageDefsOf.Sterile);
+			}
+			GeneUtility.SortGeneDefs(SanguophageDefsOf.Sanguophage.AllGenes);
 		}
 	}
 }
