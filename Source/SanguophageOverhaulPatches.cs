@@ -67,7 +67,7 @@ namespace SanguophageOverhaul
 			{
 				yield return gizmo;
 			}
-			if(Sanguophage.XenotypeIsVampire(___pawn.genes) && !___pawn.health.hediffSet.HasHediff(HediffDefOf.XenogerminationComa) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
+			if(Sanguophage.Settings.Cannibalism && Sanguophage.XenotypeIsVampire(___pawn.genes) && !___pawn.health.hediffSet.HasHediff(HediffDefOf.XenogerminationComa) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
 			{
 				yield return new CannibalizeCommand(___pawn);
 			}

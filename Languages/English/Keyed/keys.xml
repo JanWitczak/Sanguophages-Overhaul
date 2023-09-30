@@ -10,4 +10,5 @@
 		<FertileSanguophagesNotInGame>Sanguophage sterility can only be toggled in the main menu.</FertileSanguophagesNotInGame>
 		<ValidateGenes>On save load reset the xenotype of Sanguophages with obselete or altered set of xenogenes.\nThis is independant of adding and removing sterility gene.</ValidateGenes>
 		<ValidateGenesNotInGame>Geneset validation can only be toggled in the main menu.</ValidateGenesNotInGame>
+		<Cannibalism>Vampires can cannibalize other vampires to increase their deathrest capacity.</Cannibalism>
 	</LanguageData>

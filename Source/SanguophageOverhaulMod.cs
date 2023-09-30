@@ -19,8 +19,9 @@ namespace SanguophageOverhaul
 			Listing_Standard settingsMenu = new Listing_Standard();
 			settingsMenu.Begin(inRect);
 			settingsMenu.CheckboxLabeled("NoCure".Translate(), ref Settings.NoCure);
+			settingsMenu.CheckboxLabeled("Cannibalism".Translate(), ref Settings.Cannibalism);
 			settingsMenu.CheckboxLabeled("DynamicUndeath".Translate(), ref Settings.DynamicUndeath);
-			if(Settings.DynamicUndeath)
+			if(Settings.DynamicUndeath && Settings.Cannibalism)
 			{
 				settingsMenu.CheckboxLabeled("OnlyBloodfeedersCanCannibalize".Translate(), ref Settings.OnlyBloodfeedersCanCannibalize);
 			}
@@ -87,6 +88,7 @@ namespace SanguophageOverhaul
 		public bool NoCure = true;
 		public bool ValidateGenes = true;
 		public bool FertileSanguophages = false;
+		public bool Cannibalism = true;
 
 		public bool DynamicUndeath = false;
 		public bool OnlyBloodfeedersCanCannibalize = true;
@@ -97,6 +99,7 @@ namespace SanguophageOverhaul
 			Scribe_Values.Look(ref FertileSanguophages, "FertileSanguophages", defaultValue:false);
 			Scribe_Values.Look(ref DynamicUndeath, "DynamicUndeath", defaultValue:false);
 			Scribe_Values.Look(ref OnlyBloodfeedersCanCannibalize, "OnlyBloodfeedersCanCannibalize", defaultValue:true);
+			Scribe_Values.Look(ref Cannibalism, "Cannibalism", defaultValue:true);
 		}
 	}
 
