@@ -22,20 +22,20 @@ namespace SanguophageOverhaul
 		{
 			List<FloatMenuOption> options = new List<FloatMenuOption>();
 			List<Pawn> PlayerPawns = victim.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer);
-			foreach(Pawn pawn in PlayerPawns)
+			foreach (Pawn pawn in PlayerPawns)
 			{
-				if(pawn.genes != null && pawn != victim)
+				if (pawn.genes != null && pawn != victim)
 				{
-					if(Sanguophage.XenotypeCanCannibalize(pawn.genes))
-					{			
+					if (Sanguophage.XenotypeIsVampire(pawn.genes))
+					{
 						options.Add(new FloatMenuOption(pawn.LabelShort, delegate
 						{
-							JobDriver_Cannibalize.GiveCannibalizeJob(pawn , victim);
+							JobDriver_Cannibalize.GiveCannibalizeJob(pawn, victim);
 						}, pawn, Color.white));
 					}
 				}
 			}
-			if(options.Any())
+			if (options.Any())
 			{
 				Find.WindowStack.Add(new FloatMenu(options));
 			}
@@ -54,10 +54,10 @@ namespace SanguophageOverhaul
 		{
 			this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
 			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch);
-			yield return Toils_General.WaitWith(TargetIndex.A, CannibalizeDuration, useProgressBar:true);
+			yield return Toils_General.WaitWith(TargetIndex.A, CannibalizeDuration, useProgressBar: true);
 			yield return Toils_General.Do(delegate
 			{
-				if(Target.HomeFaction != null && pawn.HomeFaction == Faction.OfPlayer)
+				if (Target.HomeFaction != null && pawn.HomeFaction == Faction.OfPlayer)
 				{
 					Faction.OfPlayer.TryAffectGoodwillWith(Target.Faction, -100, canSendMessage: true, !Target.HomeFaction.temporary, HistoryEventDefOf.MemberKilled);
 				}
@@ -72,7 +72,7 @@ namespace SanguophageOverhaul
 		public static void Cannibalize(Pawn cannibal, Pawn target)
 		{
 			int offset = ((Gene_Deathrest)target.genes.GetGene(SanguophageDefsOf.Deathrest)).DeathrestCapacity;
-			((Gene_Deathrest)cannibal.genes.GetGene(SanguophageDefsOf.Deathrest)).OffsetCapacity(offset, sendNotification:true);
+			((Gene_Deathrest)cannibal.genes.GetGene(SanguophageDefsOf.Deathrest)).OffsetCapacity(offset, sendNotification: true);
 			target.genes.SetXenotype(XenotypeDefOf.Baseliner);
 			DamageInfo damageInfo = new DamageInfo(DamageDefOf.ExecutionCut, 999f, 999f, -1f, null, target.health.hediffSet.GetBrain());
 			damageInfo.SetIgnoreInstantKillProtection(ignore: true);
