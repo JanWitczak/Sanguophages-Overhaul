@@ -30,16 +30,12 @@
 		<xpath>Defs/ThingDef[defName="HemogenPack"]/comps</xpath>
 		<value>
 			<li Class="CompProperties_Rottable">
-				<daysToRotStart>3</daysToRotStart>
+				<daysToRotStart>6</daysToRotStart>
 				<rotDestroys>true</rotDestroys>
 			</li>
 		</value>
 	</Operation>
-<!--
-	<Operation Class="PatchOperationRemove">
-		<xpath>Defs/ThingDef[defName="DeathrestCapacitySerum"]/thingSetMakerTags/li[text()="RewardStandardHighFreq"]</xpath>
-	</Operation>
--->
+
 	<Operation Class="PatchOperationRemove">
 		<xpath>Defs/TraderKindDef/stockGenerators/li[thingDef="DeathrestCapacitySerum"]</xpath>
 	</Operation>
@@ -56,5 +52,29 @@
 		<value>
 			<li>MakeDeathrestCapacitySerum</li>
 		</value>
+	</Operation>
+
+	<Operation Class="PatchOperationFindMod">
+		<mods>
+			<li>Ideology</li>
+		</mods>
+		<match Class="PatchOperationSequence">
+			<operations>
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/FactionDef[defName="Sanguophages"]/requiredMemes/li[text()="Cannibal"]</xpath>
+					<value>
+						<li MayRequire="Ludeon.RimWorld.Ideology">Supremacist</li>
+					</value>
+				</li>
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/FactionDef[defName="Sanguophages"]</xpath>
+					<value>
+						<structureMemeWeights>
+							<Structure_Archist MayRequire="Ludeon.RimWorld.Ideology">1</Structure_Archist>
+						</structureMemeWeights>
+					</value>
+				</li>
+			</operations>
+		</match>
 	</Operation>
 </Patch>
