@@ -58,19 +58,4 @@ namespace SanguophageOverhaul
 			}
 		}
 	}
-	[HarmonyPatch(typeof(Gene_Deathrest), "GetGizmos")]
-	static class DeathrestGizmosPatch
-	{
-		static IEnumerable<Gizmo> Postfix(IEnumerable<Gizmo> gizmos, Pawn ___pawn)
-		{
-			foreach (Gizmo gizmo in gizmos)
-			{
-				yield return gizmo;
-			}
-			if (Sanguophage.Settings.Cannibalism && Sanguophage.XenotypeIsVampire(___pawn.genes) && !___pawn.health.hediffSet.HasHediff(HediffDefOf.XenogerminationComa) && (___pawn.IsPrisonerOfColony || (___pawn.Downed && !___pawn.HomeFaction.IsPlayer)))
-			{
-				yield return new CannibalizeCommand(___pawn);
-			}
-		}
-	}
 }

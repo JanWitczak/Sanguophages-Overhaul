@@ -6,39 +6,34 @@ using RimWorld;
 
 namespace SanguophageOverhaul
 {
-	public class CannibalizeCommand : Command_Action
+	public class FloatMenuOptionProvider_Cannibalize : FloatMenuOptionProvider
 	{
-		static CachedTexture BloodFeederTexture = new CachedTexture("UI/Icons/Genes/Gene_Bloodfeeder");
-		Pawn victim;
-		public CannibalizeCommand(Pawn pawn)
+		protected override bool Drafted => true;
+		protected override bool Undrafted => true;
+		protected override bool Multiselect => false;
+		protected override bool RequiresManipulation => true;
+		protected override FloatMenuOption GetSingleOptionFor(Pawn clickedPawn, FloatMenuContext context)
 		{
-			defaultLabel = "Cannibalize".Translate();
-			defaultDesc = "CannibalizeDesc".Translate();
-			icon = BloodFeederTexture.Texture;
-			victim = pawn;
-			action = Action;
-		}
-		void Action()
-		{
-			List<FloatMenuOption> options = new List<FloatMenuOption>();
-			List<Pawn> PlayerPawns = victim.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer);
-			foreach (Pawn pawn in PlayerPawns)
+			if (clickedPawn.genes != null && !Sanguophage.XenotypeIsVampire(clickedPawn.genes))
 			{
-				if (pawn.genes != null && pawn != victim)
-				{
-					if (Sanguophage.XenotypeIsVampire(pawn.genes))
+				return null;
+			}
+			if (clickedPawn.Dead || !(clickedPawn.IsPrisonerInPrisonCell() || clickedPawn.health.Downed))
+			{
+				return null;
+			}
+			if (!context.FirstSelectedPawn.CanReach(clickedPawn, PathEndMode.ClosestTouch, Danger.Deadly))
+			{
+				return null; //TODO : Add a message about the pawn being unreachable.
+			}
+			return FloatMenuUtility.DecoratePrioritizedTask(
+				new FloatMenuOption(
+					"Cannibalize".Translate(),
+					delegate
 					{
-						options.Add(new FloatMenuOption(pawn.LabelShort, delegate
-						{
-							JobDriver_Cannibalize.GiveCannibalizeJob(pawn, victim);
-						}, pawn, Color.white));
-					}
-				}
-			}
-			if (options.Any())
-			{
-				Find.WindowStack.Add(new FloatMenu(options));
-			}
+						JobDriver_Cannibalize.GiveCannibalizeJob(context.FirstSelectedPawn, clickedPawn);
+					}),
+					context.FirstSelectedPawn, clickedPawn);
 		}
 	}
 	public class JobDriver_Cannibalize : JobDriver
@@ -53,7 +48,7 @@ namespace SanguophageOverhaul
 		protected override IEnumerable<Toil> MakeNewToils()
 		{
 			this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
-			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch);
+			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch);
 			yield return Toils_General.WaitWith(TargetIndex.A, CannibalizeDuration, useProgressBar: true);
 			yield return Toils_General.Do(delegate
 			{
@@ -74,12 +69,10 @@ namespace SanguophageOverhaul
 			int offset = ((Gene_Deathrest)target.genes.GetGene(SanguophageDefsOf.Deathrest)).DeathrestCapacity;
 			((Gene_Deathrest)cannibal.genes.GetGene(SanguophageDefsOf.Deathrest)).OffsetCapacity(offset, sendNotification: true);
 			target.genes.SetXenotype(XenotypeDefOf.Baseliner);
-			DamageInfo damageInfo = new DamageInfo(DamageDefOf.ExecutionCut, 999f, 999f, -1f, null, target.health.hediffSet.GetBrain());
+			DamageInfo damageInfo = new DamageInfo(DamageDefOf.Bite, 999f, 999f, -1f, null, target.health.hediffSet.GetBrain());
 			damageInfo.SetIgnoreInstantKillProtection(ignore: true);
 			damageInfo.SetAllowDamagePropagation(val: false);
-			target.forceNoDeathNotification = true;
 			target.TakeDamage(damageInfo);
-			target.forceNoDeathNotification = false;
 			ThoughtUtility.GiveThoughtsForPawnExecuted(target, cannibal, PawnExecutionKind.GenericBrutal);
 		}
 	}
