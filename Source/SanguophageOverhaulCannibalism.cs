@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 using Verse;
 using Verse.AI;
 using RimWorld;
@@ -14,7 +13,11 @@ namespace SanguophageOverhaul
 		protected override bool RequiresManipulation => true;
 		protected override FloatMenuOption GetSingleOptionFor(Pawn clickedPawn, FloatMenuContext context)
 		{
-			if (clickedPawn.genes != null && !Sanguophage.XenotypeIsVampire(clickedPawn.genes))
+			if (context.FirstSelectedPawn.genes == null || !Sanguophage.XenotypeIsVampire(context.FirstSelectedPawn.genes))
+			{
+				return null;
+			}
+			if (clickedPawn.genes == null || !Sanguophage.XenotypeIsVampire(clickedPawn.genes))
 			{
 				return null;
 			}
@@ -48,6 +51,7 @@ namespace SanguophageOverhaul
 		protected override IEnumerable<Toil> MakeNewToils()
 		{
 			this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
+			this.FailOn(() => !Target.health.Downed || !Target.IsPrisonerInPrisonCell());
 			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch);
 			yield return Toils_General.WaitWith(TargetIndex.A, CannibalizeDuration, useProgressBar: true);
 			yield return Toils_General.Do(delegate
